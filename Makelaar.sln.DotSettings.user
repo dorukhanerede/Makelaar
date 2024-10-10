@@ -1,0 +1,9 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ef580d7e_002Dd820_002D4131_002D94b1_002D22aee1102f59/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RetrieveConfigurationValue_Should_Return_Configuration_Value" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::8C31451C-16D2-45D9-8CA5-2A11348E2B5E::net8.0::Makelaar.Tests.Helpers.ConfigurationExtensionTests.RetrieveConfigurationValue_Should_Return_Configuration_Value&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::8C31451C-16D2-45D9-8CA5-2A11348E2B5E::net8.0::Makelaar.Tests.Functions.GetTopEstateAgents.GetTopEstateAgentsTests.Run_ShouldReturnTopMakelaars_WhenRequestIsSuccessful&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::8C31451C-16D2-45D9-8CA5-2A11348E2B5E::net8.0::Makelaar.Tests.Services.FundaService.FundaServiceTests.GetAllPropertiesAsync_ShouldReturnSuccess_WhenApiCallSucceeds&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::8C31451C-16D2-45D9-8CA5-2A11348E2B5E::net8.0::Makelaar.Tests.Clients.FundaClient.FundaClientTests.ExecuteAsync_ShouldHandleRateLimitExceeded&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
