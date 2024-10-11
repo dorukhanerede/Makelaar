@@ -35,5 +35,15 @@ The Makelaar API provides functionality to interact with the Funda API to retrie
 ## How to Run
 
 Clone the repo and create local.settings.json file with:
-- FundaApiBaseUrl
-- FundaApiKey
+```json
+﻿{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_INPROC_NET8_ENABLED": "1",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "FundaApiBaseUrl": "super_secret_url",
+    "FundaApiKey": "super_secret_key"
+  }
+}
+```
