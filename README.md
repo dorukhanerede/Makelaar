@@ -28,4 +28,5 @@ The Makelaar API provides functionality to interact with the Funda API to retrie
 4) AutoMapper can be used to simplify mappings if the project grows
 5) Authorization if needed
 6) ApiResult and Result can be extended even more to cover more scenarios where additional information is needed.
-7) And of course MORE UNIT TESTS!
+7) Implement a RestClient Factory for Multiple API Clients (if the plan is to integrate with more APIs)
+8) And of course MORE UNIT TESTS!
