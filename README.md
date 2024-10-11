@@ -30,3 +30,10 @@ The Makelaar API provides functionality to interact with the Funda API to retrie
 6) ApiResult and Result can be extended even more to cover more scenarios where additional information is needed.
 7) Implement a RestClient Factory for Multiple API Clients (if the plan is to integrate with more APIs)
 8) And of course MORE UNIT TESTS!
+
+
+## How to Run
+
+Clone the repo and create local.settings.json file with:
+- FundaApiBaseUrl
+- FundaApiKey
