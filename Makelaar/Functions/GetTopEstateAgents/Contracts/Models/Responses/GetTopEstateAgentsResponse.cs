@@ -2,7 +2,7 @@
 
 public record GetTopEstateAgentsResponse
 {
-    public int MakelaarId { get; init; }
-    public string MakelaarName { get; init; }
+    public int EstateAgentId { get; init; }
+    public string EstateAgentName { get; init; }
     public int PropertyCount { get; init; }
 }

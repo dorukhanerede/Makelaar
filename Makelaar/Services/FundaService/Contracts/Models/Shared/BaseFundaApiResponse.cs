@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Makelaar.Services.FundaService.Contracts.Models.Shared;
+﻿namespace Makelaar.Services.FundaService.Contracts.Models.Shared;
 
 public class BaseFundaApiResponse<T>
 {

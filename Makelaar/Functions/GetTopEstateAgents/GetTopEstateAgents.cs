@@ -62,8 +62,8 @@ public sealed class GetTopEstateAgents
             .GroupBy(m => m.MakelaarId)
             .Select(g => new GetTopEstateAgentsResponse
             {
-                MakelaarId = g.Key,
-                MakelaarName = g.FirstOrDefault()?.MakelaarNaam,
+                EstateAgentId = g.Key,
+                EstateAgentName = g.FirstOrDefault()?.MakelaarNaam,
                 PropertyCount = g.Count()
             })
             .OrderByDescending(x => x.PropertyCount)
