@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Makelaar.Clients.FundaClient;
@@ -27,21 +28,54 @@ public class FundaService : IFundaService
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("FundaService.GetAllPropertiesAsync called with request: {@request}", request);
+
         var restRequest = new RestRequest();
-        
-        restRequest.AddQueryParameter("zo",
-            $"/{request.City}/{request.Text}");
-        restRequest.AddQueryParameter(nameof(request.Type),
-            request.Type);
-        restRequest.AddQueryParameter("page", "1");
+        restRequest.AddQueryParameter("zo", $"/{request.City}/{request.Text}");
+        restRequest.AddQueryParameter(nameof(request.Type), request.Type);
         restRequest.AddQueryParameter("pagesize", "25");
-        
-        var response = await _fundaClient.ExecuteAsync<GetPropertyListingResponse>(restRequest, cancellationToken);
-        if (response.Success == false)
+        restRequest.AddQueryParameter("page", 1);
+
+        var initialResponse =
+            await _fundaClient.ExecuteAsync<GetPropertyListingResponse>(restRequest, cancellationToken);
+
+        if (!initialResponse.Success)
         {
-            return Result<List<Property>>.CreateFailure(response.ErrorCode, response.Errors);
+            return Result<List<Property>>.CreateFailure(initialResponse.ErrorCode, initialResponse.Errors);
         }
 
-        return Result<List<Property>>.CreateSuccess(response.Data.Objects);
+        var totalPages = initialResponse.Data!.Paging.AantalPaginas;
+        var properties = new List<Property>(initialResponse.Data.Objects);
+
+        var pageRange = Enumerable.Range(2, totalPages - 1);
+
+        await Parallel.ForEachAsync(pageRange, new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 5,
+                CancellationToken = cancellationToken
+            },
+            async (page, ct) =>
+            {
+                var newRequest = new RestRequest();
+                newRequest.AddQueryParameter("zo", $"/{request.City}/{request.Text}");
+                newRequest.AddQueryParameter(nameof(request.Type), request.Type);
+                newRequest.AddQueryParameter("pagesize", "25");
+                newRequest.AddOrUpdateParameter("page", page);
+
+                var response = await _fundaClient.ExecuteAsync<GetPropertyListingResponse>(newRequest, ct);
+
+                if (response.Success)
+                {
+                    lock (properties)
+                    {
+                        properties.AddRange(response.Data!.Objects);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to fetch page {page}: {errors}", page, response.Errors);
+                }
+            });
+
+        return Result<List<Property>>.CreateSuccess(properties);
     }
 }

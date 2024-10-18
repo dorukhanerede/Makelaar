@@ -32,6 +32,9 @@ public class FundaServiceTests
 
         var fundaClientResponse = _fixture.Build<GetPropertyListingResponse>()
             .With(x => x.Objects, properties)
+            .With(x => x.Paging, _fixture.Build<Paging>()
+                .With(y=> y.AantalPaginas, 1)
+                .Create())
             .Create();
         _fundaClientMock.Setup(x =>
                 x.ExecuteAsync<GetPropertyListingResponse>(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))

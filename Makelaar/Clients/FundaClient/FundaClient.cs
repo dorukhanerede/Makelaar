@@ -19,8 +19,8 @@ public class FundaClient : IFundaClient
 {
     private readonly RestClient _restClient;
     private readonly ILogger<FundaClient> _logger;
-    private readonly AsyncPolicyWrap _policy;
-    
+    private readonly AsyncPolicyWrap<RestResponse> _policy;
+
     public FundaClient(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<FundaClient> logger)
     {
         _logger = logger;
@@ -30,13 +30,40 @@ public class FundaClient : IFundaClient
         var httpClientInstance = httpClientFactory.CreateClient(nameof(FundaClient));
         _restClient = new RestClient(httpClientInstance, new RestClientOptions($"{fundaApiBaseUrl}{apiKey}/"));
         
-        var rateLimitPolicy = Policy.RateLimitAsync(100, TimeSpan.FromMinutes(1));
-        var retryPolicy = Policy.Handle<WebException>()
+        var rateLimitPolicy = Policy
+            .RateLimitAsync<RestResponse>(100, TimeSpan.FromSeconds(60), maxBurst: 50);
+
+        var rateLimitRetryPolicy = Policy
+            .Handle<RateLimitRejectedException>()
+            .OrResult<RestResponse>(r => r.StatusCode is HttpStatusCode.TooManyRequests or HttpStatusCode.Unauthorized)
+            .WaitAndRetryForeverAsync(
+                sleepDurationProvider: (index, result, context) =>
+                {
+                    if (result.Exception is RateLimitRejectedException rateLimitException)
+                    {
+                        _logger.LogWarning("Rate limit exceeded. Retrying after {RetryAfter}", rateLimitException.RetryAfter);
+                        return rateLimitException.RetryAfter;
+                    } 
+                    _logger.LogError("Unauthorized. Retrying after 60 seconds.");
+                    return TimeSpan.FromSeconds(60);
+                },
+                onRetryAsync: (result, span, context) =>
+                {
+                    _logger.LogWarning($"Retrying after {span}");
+                    return Task.Delay(span);
+                } 
+            );
+        
+        var generalRetryPolicy = Policy<RestResponse>.Handle<WebException>()
             .Or<HttpRequestException>()
-            .WaitAndRetryAsync(new[] { TimeSpan.FromMinutes(1) });
+            .WaitAndRetryAsync(3, retryAttempt =>
+            {
+                _logger.LogWarning($"Something went wrong with Funda API. Retrying attempt {retryAttempt}");
+                return TimeSpan.FromSeconds(Math.Pow(2, retryAttempt));
+            });
         
-        _policy = Policy.WrapAsync(rateLimitPolicy, retryPolicy);
-        
+        _policy = Policy.WrapAsync(rateLimitRetryPolicy, rateLimitPolicy, generalRetryPolicy);
+
         _logger.LogInformation("FundaClient initialized.");
     }
     

@@ -31,7 +31,7 @@ public class Startup : FunctionsStartup
     {
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(Config);
-        builder.Services.AddScoped<IFundaClient, FundaClient>();
+        builder.Services.AddSingleton<IFundaClient, FundaClient>();
         builder.Services.AddTransient<IFundaService, FundaService>();
     }
 }
